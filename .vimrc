@@ -136,3 +136,14 @@ let g:syntastic_json_checkers          = ['jsonlint']
 let g:syntastic_ruby_checkers          = ['rubocop']
 let g:syntastic_scss_checkers          = ['scss_lint']
 let g:syntastic_vim_checkers           = ['vint']
+
+if has('persistent_undo')
+  set undodir=~/.vim/tmp/undo,. " keep undo files out of the way
+  set undofile " actually use undo files
+endif
+
+set autoread " autoload external changes unless unsaved changes
+set backupdir=~/.vim/tmp/backup,. " keep backup files out of the way
+set backspace=indent,start,eol " allow unrestricted backspacing in insert mode
+set backupdir=~/.vim/tmp/backup,. " keep backup files out of the way
+set directory=~/.vim/tmp/swap//,. " keep swap files out of the way, trailing // stores full dir
