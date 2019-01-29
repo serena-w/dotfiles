@@ -3,20 +3,29 @@
 
 execute pathogen#infect()
 
+"Enable filetype detection and syntax hilighting
+syntax on
+filetype on
+filetype indent on
+filetype plugin on
+
 " Ensure that we are in modern vim mode, not backwards-compatible vi mode
 set nocompatible
 set backspace=indent,eol,start
 filetype off " required for Vundle plugin manager
 
 " set the runtime path to include Vundle and initialize
-" set rtp+=~/.vim/bundle/Vundle.vim
-" call vundle#begin()
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 
-" let Vundle manage Vundle, required
-" Plugin 'gmarik/Vundle.vim'
+"  let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
 
-" vim-c0 plugin on Github repo
-" Plugin 'cmugpi/vim-c0'
+" vim-better-sml plugin
+Plugin 'jez/vim-better-sml'
+
+" Display type annotations of programs
+Bundle "panagosg7/vim-annotations"
 
 " call vundle#end()
 
@@ -25,12 +34,6 @@ filetype off " required for Vundle plugin manager
 set ruler
 set number
 
-"Enable filetype detection and syntax hilighting
-syntax on
-filetype on
-filetype indent on
-filetype plugin on
-
 " Indent as intelligently as vim knows how
 set smartindent
 
@@ -38,6 +41,10 @@ set smartindent
 set showcmd
 set t_Co=256 "256 color
 set encoding=utf-8 "UTF-8 character encoding
+
+" Disable beeping (http://vim.wikia.com/wiki/Disable_beeping)
+set noerrorbells visualbell t_vb=
+autocmd GUIEnter * set visualbell t_vb=
 
 " set tabstop=2  "4 space tabs
 " set shiftwidth=4  "4 space shift
@@ -81,6 +88,7 @@ set backspace=indent,eol,start  "Better backspacing
 set linebreak  "Intelligently wrap long files
 set ttyfast  "Speed up vim
 set nostartofline "Vertical movement preserves horizontal position
+set tw=80 "Wrap lines at 80 characters
 
 " Strip whitespace from end of lines when writing file
 autocmd BufWritePre * :%s/\s\+$//e
@@ -90,10 +98,10 @@ filetype plugin indent on
 syntax on
 
 " Get rid of warning on save/exit typo
-command WQ wq
-command Wq wq
-command W w
-command Q q
+command! WQ wq
+command! Wq wq
+command! W w
+command! Q q
 
 "Faster Ctrl-P search
 let g:ctrlp_lazy_update = 100 "Only refreshes the results every 100ms so if you type fast searches don't pile up
