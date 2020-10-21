@@ -21,9 +21,6 @@ call vundle#begin()
 "  let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
 
-" vim-better-sml plugin
-Plugin 'jez/vim-better-sml'
-
 " Display type annotations of programs
 Bundle "panagosg7/vim-annotations"
 
@@ -46,9 +43,6 @@ set encoding=utf-8 "UTF-8 character encoding
 set noerrorbells visualbell t_vb=
 autocmd GUIEnter * set visualbell t_vb=
 
-" set tabstop=2  "4 space tabs
-" set shiftwidth=4  "4 space shift
-" set softtabstop=4  "Tab spaces in no hard tab mode
 " Use two-space indentation
 set tabstop=2
 set softtabstop=2
@@ -107,12 +101,6 @@ command! Q q
 let g:ctrlp_lazy_update = 100 "Only refreshes the results every 100ms so if you type fast searches don't pile up
 let g:ctrlp_user_command = 'find %s -type f | egrep -iv "(\.(eot|gif|gz|ico|jpg|jpeg|otf|png|psd|pyc|svg|ttf|woff|zip)$)|(/\.)|((^|\/)tmp\/)"' "Quicker indexing
 
-"Ignore whitespace in Fugitive diffs
-set diffopt+=iwhite
-
-" Make Fugitive compatible with GitHub Enterprise
-let g:fugitive_github_domains = ['github.com', 'git.musta.ch']
-
 " Syntax checking/Linting
 scriptencoding utf-8
 
@@ -155,3 +143,41 @@ set backupdir=~/.vim/tmp/backup,. " keep backup files out of the way
 set backspace=indent,start,eol " allow unrestricted backspacing in insert mode
 set backupdir=~/.vim/tmp/backup,. " keep backup files out of the way
 set directory=~/.vim/tmp/swap//,. " keep swap files out of the way, trailing // stores full dir
+
+" ## added by OPAM user-setup for vim / base ## 93ee63e278bdfc07d1139a748ed3fff2 ## you can edit, but keep this line
+let s:opam_share_dir = system("opam config var share")
+let s:opam_share_dir = substitute(s:opam_share_dir, '[\r\n]*$', '', '')
+
+let s:opam_configuration = {}
+
+function! OpamConfOcpIndent()
+  execute "set rtp^=" . s:opam_share_dir . "/ocp-indent/vim"
+endfunction
+let s:opam_configuration['ocp-indent'] = function('OpamConfOcpIndent')
+
+function! OpamConfOcpIndex()
+  execute "set rtp+=" . s:opam_share_dir . "/ocp-index/vim"
+endfunction
+let s:opam_configuration['ocp-index'] = function('OpamConfOcpIndex')
+
+function! OpamConfMerlin()
+  let l:dir = s:opam_share_dir . "/merlin/vim"
+  execute "set rtp+=" . l:dir
+endfunction
+let s:opam_configuration['merlin'] = function('OpamConfMerlin')
+
+let s:opam_packages = ["ocp-indent", "ocp-index", "merlin"]
+let s:opam_check_cmdline = ["opam list --installed --short --safe --color=never"] + s:opam_packages
+let s:opam_available_tools = split(system(join(s:opam_check_cmdline)))
+for tool in s:opam_packages
+  " Respect package order (merlin should be after ocp-index)
+  if count(s:opam_available_tools, tool) > 0
+    call s:opam_configuration[tool]()
+  endif
+endfor
+" ## end of OPAM user-setup addition for vim / base ## keep this line
+
+" Run prettier auto formatting for files on save
+let g:prettier#autoformat = 0
+autocmd BufWritePre *.js,*.json,*.css,*.scss,*.less,*.graphql,*.ts,*.tsx Prettier
+autocmd FileType typescript setlocal formatprg=prettier\ --parser\ typescript
