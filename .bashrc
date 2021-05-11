@@ -96,7 +96,11 @@ mesg n
 # ----- change the prompt ----------------------------------------------------
 
 parse_git_branch() {
-  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+  if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ]; then
+    echo " ($(git symbolic-ref --quiet --short HEAD || git rev-parse --short HEAD))"
+  else
+    ""
+  fi
 }
 
 # It's really fun to customize your prompt.
