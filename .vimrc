@@ -1,12 +1,12 @@
 " Started with sample .vimrc file from Great Practical Ideas for Computer
 " Scientists
 
-execute pathogen#infect()
+" execute pathogen#infect()
 
 "Enable filetype detection and syntax hilighting
 syntax on
-filetype on
-filetype indent on
+" filetype on
+" filetype indent on
 filetype plugin on
 
 " Ensure that we are in modern vim mode, not backwards-compatible vi mode
@@ -24,7 +24,25 @@ Plugin 'gmarik/Vundle.vim'
 " Display type annotations of programs
 Bundle "panagosg7/vim-annotations"
 
-" call vundle#end()
+"  Syntastic
+Plugin 'scrooloose/syntastic'
+
+"  Prettier
+Plugin 'prettier/vim-prettier'
+
+"  Typescript syntax highlighting
+Plugin 'leafgarland/typescript-vim'
+
+"  Color scheme
+Plugin 'jonathanfilip/vim-lucius'
+
+"  Color scheme
+Plugin 'Quramy/tsuquyomi'
+
+call vundle#end()
+
+" Set color scheme
+autocmd vimenter * ++nested colorscheme lucius
 
 " Helpful information: cursor position in bottom right, line numbers on
 " left
@@ -72,7 +90,7 @@ set incsearch  "Start searching immediately
 set scrolloff=5  "Never scroll off
 set wildmode=longest,list  "Better unix-like tab completion
 set cursorline  "Highlight current line
-set clipboard=unnamed  "Copy and paste from system clipboard
+" set clipboard=unnamed  "Copy and paste from system clipboard
 set lazyredraw  "Don't redraw while running macros (faster)
 set autochdir  "Change directory to currently open file
 set nocompatible  "Kill vi-compatibility
@@ -109,7 +127,7 @@ let g:syntastic_always_populate_loc_list = 1
 
 " Don't auto-open it when errors/warnings are detected, but auto-close when no
 " more errors/warnings are detected.
-let g:syntastic_auto_loc_list = 2
+" let g:syntastic_auto_loc_list = 2
 
 " Highlight syntax errors where possible
 let g:syntastic_enable_highlighting = 1
@@ -129,14 +147,18 @@ let g:syntastic_javascript_checkers    = ['eslint']
 let s:eslint_path = system('PATH=$(npm bin):$PATH && which eslint')
 let g:syntastic_javascript_eslint_exec = substitute(s:eslint_path, '^\n*\s*\(.\{-}\)\n*\s*$', '\1', '')
 let g:syntastic_json_checkers          = ['jsonlint']
+let g:tsuquyomi_disable_quickfix = 1
+let g:syntastic_typescript_checkers = ['tsuquyomi', 'eslint'] " You shouldn't use 'tsc' checker.
+let g:syntastic_typescript_tsc_fname = ''
+
+let g:syntastic_python_checkers = ['pylint']
+let g:syntastic_python_pylint_args = "--disable=E111"
 let g:syntastic_ruby_checkers          = ['rubocop']
 let g:syntastic_scss_checkers          = ['scss_lint']
 let g:syntastic_vim_checkers           = ['vint']
 
-if has('persistent_undo')
-  set undodir=~/.vim/tmp/undo,. " keep undo files out of the way
-  set undofile " actually use undo files
-endif
+set undodir=~/.vim/tmp/undo " keep undo files out of the way
+set undofile " actually use undo files
 
 set autoread " autoload external changes unless unsaved changes
 set backupdir=~/.vim/tmp/backup,. " keep backup files out of the way
@@ -181,3 +203,7 @@ endfor
 let g:prettier#autoformat = 0
 autocmd BufWritePre *.js,*.json,*.css,*.scss,*.less,*.graphql,*.ts,*.tsx Prettier
 autocmd FileType typescript setlocal formatprg=prettier\ --parser\ typescript
+
+" In vim v8.1.1930, tsx has filetype typescriptreact instead of typescript https://github.com/leafgarland/typescript-vim/pull/167
+autocmd BufNewFile,BufRead  *.tsx setlocal syntax=typescript
+autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescript
