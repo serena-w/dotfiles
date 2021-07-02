@@ -1,8 +1,6 @@
 " Started with sample .vimrc file from Great Practical Ideas for Computer
 " Scientists
 
-" execute pathogen#infect()
-
 "Enable filetype detection and syntax hilighting
 syntax on
 " filetype on
@@ -15,6 +13,7 @@ set backspace=indent,eol,start
 filetype off " required for Vundle plugin manager
 
 " set the runtime path to include Vundle and initialize
+" Run :PluginInstall to install plugins from Github
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
@@ -38,6 +37,10 @@ Plugin 'jonathanfilip/vim-lucius'
 
 "  Color scheme
 Plugin 'Quramy/tsuquyomi'
+
+"  Conquer of completion - autocomplete, code snippets
+"  Run yarn install --frozen-lockfile in directory after installing
+Plugin 'neoclide/coc.nvim'
 
 call vundle#end()
 
@@ -202,8 +205,66 @@ endfor
 " Run prettier auto formatting for files on save
 let g:prettier#autoformat = 0
 autocmd BufWritePre *.js,*.json,*.css,*.scss,*.less,*.graphql,*.ts,*.tsx Prettier
-autocmd FileType typescript setlocal formatprg=prettier\ --parser\ typescript
+autocmd FileType typescriptreact setlocal formatprg=prettier\ --parser\ typescript
 
-" In vim v8.1.1930, tsx has filetype typescriptreact instead of typescript https://github.com/leafgarland/typescript-vim/pull/167
-autocmd BufNewFile,BufRead  *.tsx setlocal syntax=typescript
-autocmd BufNewFile,BufRead *.tsx setlocal filetype=typescript
+
+""" coc config
+""" Need nodejs >= 12.12, vim >= 8.0
+
+" TextEdit might fail if hidden is not set.
+set hidden
+
+" Some servers have issues with backup files, see #649.
+set nobackup
+set nowritebackup
+
+" Give more space for displaying messages.
+set cmdheight=2
+
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=300
+
+" Don't pass messages to |ins-completion-menu|.
+set shortmess+=c
+
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved.
+if has("nvim-0.5.0") || has("patch-8.1.1564")
+  " Recently vim can merge signcolumn and number column into one
+  set signcolumn=number
+else
+  set signcolumn=yes
+endif
+
+" Use tab for trigger completion, completion confirm, snippet expand and jump.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+let g:coc_snippet_next = '<tab>'
+
+inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
+inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
+
