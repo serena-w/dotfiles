@@ -56,7 +56,7 @@ export PATH="$GOPATH/bin:$PATH"
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
 
 # Run pyenv
-eval "$(pyenv init -)"
+eval "$(pyenv init --path)"
 
 # Load nodenv automatically
 eval "$(nodenv init -)"
@@ -66,3 +66,5 @@ ppy() { python provisioner.py "$@"; }
 
 # Local RELOAD flag for development
 export RELOAD=true
+
+export PATH=$PATH:/Users/serenawang/.nodenv/versions/12.18.3/bin
