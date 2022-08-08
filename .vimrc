@@ -45,7 +45,7 @@ Plugin 'neoclide/coc.nvim'
 call vundle#end()
 
 " Set color scheme
-autocmd vimenter * ++nested colorscheme lucius
+colorscheme lucius
 
 " Helpful information: cursor position in bottom right, line numbers on
 " left
