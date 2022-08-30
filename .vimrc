@@ -151,7 +151,7 @@ let s:eslint_path = system('PATH=$(npm bin):$PATH && which eslint')
 let g:syntastic_javascript_eslint_exec = substitute(s:eslint_path, '^\n*\s*\(.\{-}\)\n*\s*$', '\1', '')
 let g:syntastic_json_checkers          = ['jsonlint']
 let g:tsuquyomi_disable_quickfix = 1
-let g:syntastic_typescript_checkers = ['tsuquyomi', 'eslint'] " You shouldn't use 'tsc' checker.
+let g:syntastic_typescript_checkers = ['tsuquyomi'] " You shouldn't use 'tsc' checker.
 let g:syntastic_typescript_tsc_fname = ''
 
 let g:syntastic_python_checkers = ['pylint']
@@ -201,6 +201,10 @@ for tool in s:opam_packages
   endif
 endfor
 " ## end of OPAM user-setup addition for vim / base ## keep this line
+
+" Organize imports on save
+" To install coc extension, run :CocInstall coc-tsserver
+autocmd BufWritePre *.ts,*.tsx :call CocAction('runCommand', 'tsserver.organizeImports')
 
 " Run prettier auto formatting for files on save
 let g:prettier#autoformat = 0
