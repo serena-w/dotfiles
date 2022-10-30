@@ -1,12 +1,10 @@
 " Started with sample .vimrc file from Great Practical Ideas for Computer
 " Scientists
 
-execute pathogen#infect()
-
 "Enable filetype detection and syntax hilighting
 syntax on
-filetype on
-filetype indent on
+" filetype on
+" filetype indent on
 filetype plugin on
 
 " Ensure that we are in modern vim mode, not backwards-compatible vi mode
@@ -15,6 +13,7 @@ set backspace=indent,eol,start
 filetype off " required for Vundle plugin manager
 
 " set the runtime path to include Vundle and initialize
+" Run :PluginInstall to install plugins from Github
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
@@ -24,7 +23,29 @@ Plugin 'gmarik/Vundle.vim'
 " Display type annotations of programs
 Bundle "panagosg7/vim-annotations"
 
-" call vundle#end()
+"  Syntastic
+Plugin 'scrooloose/syntastic'
+
+"  Prettier
+Plugin 'prettier/vim-prettier'
+
+"  Typescript syntax highlighting
+Plugin 'leafgarland/typescript-vim'
+
+"  Color scheme
+Plugin 'jonathanfilip/vim-lucius'
+
+"  Color scheme
+Plugin 'Quramy/tsuquyomi'
+
+"  Conquer of completion - autocomplete, code snippets
+"  Run yarn install --frozen-lockfile in directory after installing
+Plugin 'neoclide/coc.nvim'
+
+call vundle#end()
+
+" Set color scheme
+colorscheme lucius
 
 " Helpful information: cursor position in bottom right, line numbers on
 " left
@@ -72,7 +93,7 @@ set incsearch  "Start searching immediately
 set scrolloff=5  "Never scroll off
 set wildmode=longest,list  "Better unix-like tab completion
 set cursorline  "Highlight current line
-set clipboard=unnamed  "Copy and paste from system clipboard
+" set clipboard=unnamed  "Copy and paste from system clipboard
 set lazyredraw  "Don't redraw while running macros (faster)
 set autochdir  "Change directory to currently open file
 set nocompatible  "Kill vi-compatibility
@@ -109,7 +130,7 @@ let g:syntastic_always_populate_loc_list = 1
 
 " Don't auto-open it when errors/warnings are detected, but auto-close when no
 " more errors/warnings are detected.
-let g:syntastic_auto_loc_list = 2
+" let g:syntastic_auto_loc_list = 2
 
 " Highlight syntax errors where possible
 let g:syntastic_enable_highlighting = 1
@@ -129,14 +150,18 @@ let g:syntastic_javascript_checkers    = ['eslint']
 let s:eslint_path = system('PATH=$(npm bin):$PATH && which eslint')
 let g:syntastic_javascript_eslint_exec = substitute(s:eslint_path, '^\n*\s*\(.\{-}\)\n*\s*$', '\1', '')
 let g:syntastic_json_checkers          = ['jsonlint']
+let g:tsuquyomi_disable_quickfix = 1
+let g:syntastic_typescript_checkers = ['tsuquyomi'] " You shouldn't use 'tsc' checker.
+let g:syntastic_typescript_tsc_fname = ''
+
+let g:syntastic_python_checkers = ['pylint']
+let g:syntastic_python_pylint_args = "--disable=E111"
 let g:syntastic_ruby_checkers          = ['rubocop']
 let g:syntastic_scss_checkers          = ['scss_lint']
 let g:syntastic_vim_checkers           = ['vint']
 
-if has('persistent_undo')
-  set undodir=~/.vim/tmp/undo,. " keep undo files out of the way
-  set undofile " actually use undo files
-endif
+set undodir=~/.vim/tmp/undo " keep undo files out of the way
+set undofile " actually use undo files
 
 set autoread " autoload external changes unless unsaved changes
 set backupdir=~/.vim/tmp/backup,. " keep backup files out of the way
@@ -177,7 +202,77 @@ for tool in s:opam_packages
 endfor
 " ## end of OPAM user-setup addition for vim / base ## keep this line
 
+" Organize imports on save
+" To install coc extension, run :CocInstall coc-tsserver
+autocmd BufWritePre *.ts,*.tsx :call CocAction('runCommand', 'tsserver.organizeImports')
+
 " Run prettier auto formatting for files on save
 let g:prettier#autoformat = 0
 autocmd BufWritePre *.js,*.json,*.css,*.scss,*.less,*.graphql,*.ts,*.tsx Prettier
-autocmd FileType typescript setlocal formatprg=prettier\ --parser\ typescript
+autocmd FileType typescriptreact setlocal formatprg=prettier\ --parser\ typescript
+
+
+""" coc config
+""" Need nodejs >= 12.12, vim >= 8.0
+
+" TextEdit might fail if hidden is not set.
+set hidden
+
+" Some servers have issues with backup files, see #649.
+set nobackup
+set nowritebackup
+
+" Give more space for displaying messages.
+set cmdheight=2
+
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=300
+
+" Don't pass messages to |ins-completion-menu|.
+set shortmess+=c
+
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved.
+if has("nvim-0.5.0") || has("patch-8.1.1564")
+  " Recently vim can merge signcolumn and number column into one
+  set signcolumn=number
+else
+  set signcolumn=yes
+endif
+
+" Use tab for trigger completion, select next completion, snippet expand and jump.
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1):
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+let g:coc_snippet_next = '<tab>'
+
+" Use enter for completion confirm
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+" Use shift+tab to select previous completion
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+hi CocSearch ctermfg=12 guifg=#18A3FF
+hi CocMenuSel ctermbg=109 guibg=#13354A
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction

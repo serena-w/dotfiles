@@ -38,3 +38,33 @@ export EDITOR=vim
 
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 source ~/.bashrc
+
+###################################################
+# Instabase
+###################################################
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/serenawang/google-cloud-sdk/path.bash.inc' ]; then . '/Users/serenawang/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/serenawang/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/serenawang/google-cloud-sdk/completion.bash.inc'; fi
+
+# Go binaries and paths
+export PATH=$PATH:/usr/local/opt/go/libexec/bin
+export PATH="/usr/local/go/bin:$PATH"
+export GOPATH="$HOME/Documents/workspace/go"
+export PATH="$GOPATH/bin:$PATH"
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
+
+# Run pyenv
+eval "$(pyenv init --path)"
+
+# Load nodenv automatically
+eval "$(nodenv init -)"
+
+# Provisioner shortcut
+ppy() { python provisioner.py "$@"; }
+
+# Local RELOAD flag for development
+export RELOAD=true
+
+export PATH=$PATH:/Users/serenawang/.nodenv/versions/12.18.3/bin
