@@ -42,12 +42,6 @@ source ~/.bashrc
 ###################################################
 # Instabase
 ###################################################
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/serenawang/google-cloud-sdk/path.bash.inc' ]; then . '/Users/serenawang/google-cloud-sdk/path.bash.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/serenawang/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/serenawang/google-cloud-sdk/completion.bash.inc'; fi
-
 # Go binaries and paths
 export PATH=$PATH:/usr/local/opt/go/libexec/bin
 export PATH="/usr/local/go/bin:$PATH"
@@ -61,10 +55,27 @@ eval "$(pyenv init --path)"
 # Load nodenv automatically
 eval "$(nodenv init -)"
 
+# Path to instabase git repo
+export IB_HOME=/Users/serenawang/instabase
+
 # Provisioner shortcut
-ppy() { python provisioner.py "$@"; }
+ppy() { python $IB_HOME/provisioner.py "$@"; }
 
 # Local RELOAD flag for development
 export RELOAD=true
 
 export PATH=$PATH:/Users/serenawang/.nodenv/versions/12.18.3/bin
+export PATH=$PATH:/Users/serenawang/.nodenv/versions/18.14.2/bin
+export PATH=$PATH:/Users/serenawang/.local/bin
+
+# Default AWS profile
+export AWS_PROFILE=instabase-BaseEng
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/serenawang/google-cloud-sdk/path.bash.inc' ]; then . '/Users/serenawang/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/serenawang/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/serenawang/google-cloud-sdk/completion.bash.inc'; fi
+
+# Crafting sandbox server URL
+export CRAFTING_SANDBOX_SERVER_URL=https://instabase.sandboxes.site

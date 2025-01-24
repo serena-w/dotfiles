@@ -42,6 +42,9 @@ Plugin 'Quramy/tsuquyomi'
 "  Run yarn install --frozen-lockfile in directory after installing
 Plugin 'neoclide/coc.nvim'
 
+"  Github Copilot
+Plugin 'github/copilot.vim'
+
 call vundle#end()
 
 " Set color scheme
@@ -104,6 +107,7 @@ set linebreak  "Intelligently wrap long files
 set ttyfast  "Speed up vim
 set nostartofline "Vertical movement preserves horizontal position
 set tw=80 "Wrap lines at 80 characters
+set shortmess-=Sa "Show [x/y] count when searching
 
 " Strip whitespace from end of lines when writing file
 autocmd BufWritePre * :%s/\s\+$//e
@@ -169,39 +173,6 @@ set backspace=indent,start,eol " allow unrestricted backspacing in insert mode
 set backupdir=~/.vim/tmp/backup,. " keep backup files out of the way
 set directory=~/.vim/tmp/swap//,. " keep swap files out of the way, trailing // stores full dir
 
-" ## added by OPAM user-setup for vim / base ## 93ee63e278bdfc07d1139a748ed3fff2 ## you can edit, but keep this line
-let s:opam_share_dir = system("opam config var share")
-let s:opam_share_dir = substitute(s:opam_share_dir, '[\r\n]*$', '', '')
-
-let s:opam_configuration = {}
-
-function! OpamConfOcpIndent()
-  execute "set rtp^=" . s:opam_share_dir . "/ocp-indent/vim"
-endfunction
-let s:opam_configuration['ocp-indent'] = function('OpamConfOcpIndent')
-
-function! OpamConfOcpIndex()
-  execute "set rtp+=" . s:opam_share_dir . "/ocp-index/vim"
-endfunction
-let s:opam_configuration['ocp-index'] = function('OpamConfOcpIndex')
-
-function! OpamConfMerlin()
-  let l:dir = s:opam_share_dir . "/merlin/vim"
-  execute "set rtp+=" . l:dir
-endfunction
-let s:opam_configuration['merlin'] = function('OpamConfMerlin')
-
-let s:opam_packages = ["ocp-indent", "ocp-index", "merlin"]
-let s:opam_check_cmdline = ["opam list --installed --short --safe --color=never"] + s:opam_packages
-let s:opam_available_tools = split(system(join(s:opam_check_cmdline)))
-for tool in s:opam_packages
-  " Respect package order (merlin should be after ocp-index)
-  if count(s:opam_available_tools, tool) > 0
-    call s:opam_configuration[tool]()
-  endif
-endfor
-" ## end of OPAM user-setup addition for vim / base ## keep this line
-
 " Organize imports on save
 " To install coc extension, run :CocInstall coc-tsserver
 autocmd BufWritePre *.ts,*.tsx :call CocAction('runCommand', 'tsserver.organizeImports')
@@ -210,6 +181,10 @@ autocmd BufWritePre *.ts,*.tsx :call CocAction('runCommand', 'tsserver.organizeI
 let g:prettier#autoformat = 0
 autocmd BufWritePre *.js,*.json,*.css,*.scss,*.less,*.graphql,*.ts,*.tsx Prettier
 autocmd FileType typescriptreact setlocal formatprg=prettier\ --parser\ typescript
+
+" Run eslint on save
+" To install coc extension, run :CocInstall coc-eslint
+" See eslint.autoFixOnSave in config by running :CocConfig
 
 
 """ coc config
@@ -276,3 +251,11 @@ function! s:show_documentation()
     execute '!' . &keywordprg . " " . expand('<cword>')
   endif
 endfunction
+
+" Copilot keybindings
+" ALT-]
+inoremap ‘ <Plug>(copilot-next)
+" ALT-[
+inoremap “ <Plug>(copilot-previous)
+" ALT-\
+inoremap « <Plug>(copilot-suggest)
