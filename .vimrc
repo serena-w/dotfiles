@@ -23,9 +23,6 @@ Plugin 'gmarik/Vundle.vim'
 " Display type annotations of programs
 Bundle "panagosg7/vim-annotations"
 
-"  Syntastic
-Plugin 'scrooloose/syntastic'
-
 "  Prettier
 Plugin 'prettier/vim-prettier'
 
@@ -125,41 +122,6 @@ let g:ctrlp_user_command = 'find %s -type f | egrep -iv "(\.(eot|gif|gz|ico|jpg|
 " Syntax checking/Linting
 scriptencoding utf-8
 
-" Always add any detected errors into the location list
-let g:syntastic_always_populate_loc_list = 1
-
-" Don't auto-open it when errors/warnings are detected, but auto-close when no
-" more errors/warnings are detected.
-" let g:syntastic_auto_loc_list = 2
-
-" Highlight syntax errors where possible
-let g:syntastic_enable_highlighting = 1
-
-" Show this many errors/warnings at a time in the location list
-let g:syntastic_loc_list_height = 5
-
-" Don't run checkers when saving and quitting--only on saving
-let g:syntastic_check_on_wq = 0
-
-let g:syntastic_error_symbol         = '×' " There are better characters, but Hackpad won't show them
-let g:syntastic_warning_symbol       = '⚠'
-let g:syntastic_style_error_symbol   = '⚠'
-let g:syntastic_style_warning_symbol = '⚠'
-
-let g:syntastic_javascript_checkers    = ['eslint']
-let s:eslint_path = system('PATH=$(npm bin):$PATH && which eslint')
-let g:syntastic_javascript_eslint_exec = substitute(s:eslint_path, '^\n*\s*\(.\{-}\)\n*\s*$', '\1', '')
-let g:syntastic_json_checkers          = ['jsonlint']
-let g:tsuquyomi_disable_quickfix = 1
-let g:syntastic_typescript_checkers = ['tsuquyomi'] " You shouldn't use 'tsc' checker.
-let g:syntastic_typescript_tsc_fname = ''
-
-let g:syntastic_python_checkers = ['pylint']
-let g:syntastic_python_pylint_args = "--disable=E111"
-let g:syntastic_ruby_checkers          = ['rubocop']
-let g:syntastic_scss_checkers          = ['scss_lint']
-let g:syntastic_vim_checkers           = ['vint']
-
 set undodir=~/.vim/tmp/undo " keep undo files out of the way
 set undofile " actually use undo files
 
@@ -169,42 +131,8 @@ set backspace=indent,start,eol " allow unrestricted backspacing in insert mode
 set backupdir=~/.vim/tmp/backup,. " keep backup files out of the way
 set directory=~/.vim/tmp/swap//,. " keep swap files out of the way, trailing // stores full dir
 
-" ## added by OPAM user-setup for vim / base ## 93ee63e278bdfc07d1139a748ed3fff2 ## you can edit, but keep this line
-let s:opam_share_dir = system("opam config var share")
-let s:opam_share_dir = substitute(s:opam_share_dir, '[\r\n]*$', '', '')
-
-let s:opam_configuration = {}
-
-function! OpamConfOcpIndent()
-  execute "set rtp^=" . s:opam_share_dir . "/ocp-indent/vim"
-endfunction
-let s:opam_configuration['ocp-indent'] = function('OpamConfOcpIndent')
-
-function! OpamConfOcpIndex()
-  execute "set rtp+=" . s:opam_share_dir . "/ocp-index/vim"
-endfunction
-let s:opam_configuration['ocp-index'] = function('OpamConfOcpIndex')
-
-function! OpamConfMerlin()
-  let l:dir = s:opam_share_dir . "/merlin/vim"
-  execute "set rtp+=" . l:dir
-endfunction
-let s:opam_configuration['merlin'] = function('OpamConfMerlin')
-
-let s:opam_packages = ["ocp-indent", "ocp-index", "merlin"]
-let s:opam_check_cmdline = ["opam list --installed --short --safe --color=never"] + s:opam_packages
-let s:opam_available_tools = split(system(join(s:opam_check_cmdline)))
-for tool in s:opam_packages
-  " Respect package order (merlin should be after ocp-index)
-  if count(s:opam_available_tools, tool) > 0
-    call s:opam_configuration[tool]()
-  endif
-endfor
-" ## end of OPAM user-setup addition for vim / base ## keep this line
-
 " Organize imports on save
-" To install coc extension, run :CocInstall coc-tsserver
-autocmd BufWritePre *.ts,*.tsx :call CocAction('runCommand', 'tsserver.organizeImports')
+autocmd BufWritePre *.ts,*.tsx :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " Run prettier auto formatting for files on save
 let g:prettier#autoformat = 0
@@ -214,6 +142,9 @@ autocmd FileType typescriptreact setlocal formatprg=prettier\ --parser\ typescri
 
 """ coc config
 """ Need nodejs >= 12.12, vim >= 8.0
+""" Install extensions below
+" :CocInstall coc-tsserver
+" :CocInstall coc-eslint
 
 " TextEdit might fail if hidden is not set.
 set hidden
