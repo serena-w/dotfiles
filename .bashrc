@@ -103,6 +103,8 @@ parse_git_branch() {
   fi
 }
 
+source ~/.git-prompt.sh
+
 # It's really fun to customize your prompt.
 # Give it a try! See man bash for help
 # PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
@@ -131,3 +133,6 @@ PS1="\`if [ \$? = 0 ]; then echo \[\e[33m\]^_^\[\e[0m\]; else echo \[\e[31m\]O_O
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+export CRAFTING_SANDBOX_SERVER_URL=https://instabase.sandboxes.site
+export PATH="/opt/homebrew/bin/python3:$PATH"

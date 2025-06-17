@@ -38,3 +38,5 @@ export EDITOR=vim
 
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 source ~/.bashrc
+
+eval "$(/opt/homebrew/bin/brew shellenv)"
