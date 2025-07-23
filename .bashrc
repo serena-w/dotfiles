@@ -84,7 +84,12 @@ if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
 
-bind "set completion-ignore-case on"
+if [[ "$-" = *i* ]]
+then
+  # standard output is a tty
+  # do interactive initialization
+  bind "set completion-ignore-case on"
+fi
 
 # Make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe.sh ] && export LESSOPEN="|/usr/bin/lesspipe.sh %s"
